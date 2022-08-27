@@ -32,14 +32,16 @@ app.post("/register", async (req, res) =>{
     
     const [rows, fields] = await mydb.query(`SELECT * from test.users WHERE username = '${username}'`);
 
-    if(rows.length > 0)
+    if(rows[0])
     {
       return res.status(200).send({ 
         success: false,
         message: "User already registered!",
        })
-    }else{
+    }
 
+    if(!rows[0])
+    {
       const result = await mydb.query(`INSERT INTO test.users (username, password) VALUES ('${username}', '${hash}')`);
       
       if(result){
@@ -48,8 +50,9 @@ app.post("/register", async (req, res) =>{
           message: "User registered Successfully!",
          })
       }
+    }
+
     
-    } 
 });
 
 app.post('/login', async (req, res)=>{
